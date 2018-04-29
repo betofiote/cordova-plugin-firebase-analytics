@@ -7,6 +7,8 @@
 - (void)pluginInitialize {
     NSLog(@"Starting Firebase Analytics plugin");
 
+    [FIROptions defaultOptions].deepLinkURLScheme = [FIROptions defaultOptions].bundleID;
+
     if(![FIRApp defaultApp]) {
         [FIRApp configure];
     }
@@ -42,8 +44,7 @@
 }
 
 - (void)setEnabled:(CDVInvokedUrlCommand *)command {
-    NSString* enabledStr = [command.arguments objectAtIndex:0];
-    BOOL enabled = [enabledStr isEqualToString:@"true"];
+    bool enabled = [[command.arguments objectAtIndex:0] boolValue];
 
     [[FIRAnalyticsConfiguration sharedInstance] setAnalyticsCollectionEnabled:enabled];
 
@@ -54,7 +55,7 @@
 - (void)setCurrentScreen:(CDVInvokedUrlCommand *)command {
     NSString* name = [command.arguments objectAtIndex:0];
 
-    [FIRAnalytics screenName:name screenClass:nil];
+    [FIRAnalytics setScreenName:name screenClass:nil];
 
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
